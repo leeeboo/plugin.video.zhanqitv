@@ -41,8 +41,6 @@ def room_list(game_id):
 
     obj = json.loads(f.read())
 
-    videol=rr.findAll('a',{'class':'video-list-item-inner'})
-    rrr=[(x['href'][1:],x.img,x.findNextSibling('div',{'class':'live-info'})) for x in videol]
     listing=[]
 
     for room in obj['data']['rooms']:
