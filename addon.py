@@ -28,7 +28,7 @@ def list_categories():
         list_item.setProperty('fanart_image', game['bpic'])
         url='{0}?action=room_list&game_id={1}'.format(_url, game['id'])
 
-        xbmc.log(url, 1)
+        #xbmc.log(url, 1)
 
         is_folder=True
         listing.append((url, list_item, is_folder))
