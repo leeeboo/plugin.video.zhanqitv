@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.zhanqi"
+    name="战旗TV(ZhanqiTV)"
+    version="1.0.0"
+    provider-name="Albert">
+    <requires>
+        <import addon="script.module.beautifulsoup" version="3.0.8"/>
+    </requires>
+    <extension
+        point="xbmc.python.pluginsource"
+        library="addon.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en">zhanqi video plugin</summary>
+        <summary lang="zh">战旗TV插件</summary>
+        <description lang="en">online video from www.zhanqi.tv</description>
+        <description lang="zh">战旗TV</description>
+        <platform>all</platform>
+    </extension>
+</addon>
