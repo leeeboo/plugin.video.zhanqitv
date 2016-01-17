@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.zhanqitv"
     name="战旗TV(ZhanqiTV)"
-    version="1.0.0"
+    version="1.0.2"
     provider-name="Albert">
     <requires>
         <import addon="script.module.beautifulsoup" version="3.0.8"/>
