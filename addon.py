@@ -5,7 +5,7 @@
 # License: GPL v.3 https://www.gnu.org/copyleft/gpl.html
 # Largely following the example at 
 # https://github.com/romanvm/plugin.video.example/blob/master/main.py
-import xbmc,xbmcgui,urllib2,re,xbmcplugin,time,json
+import xbmc,xbmcgui,urllib2,re,xbmcplugin,time
 from urlparse import parse_qsl
 import sys
 import json
@@ -27,6 +27,9 @@ def list_categories():
         list_item = xbmcgui.ListItem(label=game['name'], thumbnailImage=game['bpic'])
         list_item.setProperty('fanart_image', game['bpic'])
         url='{0}?action=room_list&game_id={1}'.format(_url, game['id'])
+
+        xbmc.log(url, 1)
+
         is_folder=True
         listing.append((url, list_item, is_folder))
 
@@ -43,7 +46,7 @@ def room_list(game_id):
 
     listing=[]
     for room in obj['data']['rooms']:
-        list_item = xbmcgui.ListItem(label='{0}{1}'.format(room['nickname'], room['title']), thumbnailImage=room['bpic'])
+        list_item = xbmcgui.ListItem(label=room['title'], thumbnailImage=room['bpic'])
         list_item.setProperty('fanart_image', room['bpic'])
         url='{0}?action=play&room_id={1}'.format(_url, room['id'])
         is_folder=False
@@ -61,7 +64,9 @@ def play_video(room_id):
     """
     f = urllib2.urlopen('http://www.zhanqi.tv/api/static/live.roomid/{room_id}.json?sid='.format(room_id=room_id))
     obj = json.loads(f.read())
-    path = 'http://dlhls.cdn.zhanqi.tv/zqlive/{video}.m3u8'.format(video=obj['data']['videoIdKey']);
+    #path = 'http://dlhls.cdn.zhanqi.tv/zqlive/{video}.m3u8'.format(video=obj['data']['videoIdKey']);
+    #path = 'http://ebithdl.cdn.zhanqi.tv/zqlive/{video}.flv'.format(video=obj['data']['videoIdKey'])
+    path = 'rtmp://dlrtmp.load.cdn.zhanqi.tv/zqlive/{video}'.format(video=obj['data']['videoIdKey'])
     play_item = xbmcgui.ListItem(path=path, thumbnailImage=obj['data']['bpic'])
     play_item.setInfo(type="Video", infoLabels={"Title":obj['data']['title']})
     # Pass the item to the Kodi player.
