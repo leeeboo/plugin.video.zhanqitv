@@ -42,7 +42,6 @@ def room_list(game_id):
     obj = json.loads(f.read())
 
     listing=[]
-
     for room in obj['data']['rooms']:
         list_item = xbmcgui.ListItem(label='{0}{1}'.format(room['nickname'], room['title']), thumbnailImage=room['bpic'])
         list_item.setProperty('fanart_image', room['bpic'])
