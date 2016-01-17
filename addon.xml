@@ -3,9 +3,6 @@
     name="战旗TV(ZhanqiTV)"
     version="1.0.2"
     provider-name="Albert">
-    <requires>
-        <import addon="script.module.beautifulsoup" version="3.0.8"/>
-    </requires>
     <extension
         point="xbmc.python.pluginsource"
         library="addon.py">
