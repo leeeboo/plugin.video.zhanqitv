@@ -76,7 +76,7 @@ def room_list(game_id):
 
 def lyingman():
 
-    f = urllib2.urlopen('http://www.zhanqi.tv/api/static/video.anchor_news/104677512-100-1.json?_v={ts}'.format(ts=time.time()))
+    f = urllib2.urlopen('http://www.zhanqi.tv/api/static/video.anchor_news/108705853-100-1.json?_v={ts}'.format(ts=time.time()))
 
     obj = json.loads(f.read())
 
