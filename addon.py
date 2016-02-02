@@ -18,6 +18,24 @@ _handle=int(sys.argv[1])
 
 def list_categories():
 
+    listing=[]
+    list_item = xbmcgui.ListItem(label='直播', thumbnailImage='')
+    url='{0}?action=game_list'.format(_url)
+    is_folder=True
+    listing.append((url, list_item, is_folder))
+
+    list_item = xbmcgui.ListItem(label='Lyingman', thumbnailImage='')
+    url='{0}?action=lyingman'.format(_url)
+    is_folder=True
+    listing.append((url, list_item, is_folder))
+
+    xbmcplugin.addDirectoryItems(_handle,listing,len(listing))
+    #xbmcplugin.addSortMethod(_handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    # Finish creating a virtual folder.
+    xbmcplugin.endOfDirectory(_handle)
+
+def game_list():
+
     f = urllib2.urlopen('http://www.zhanqi.tv/api/static/game.lists/100-1.json?rand={ts}'.format(ts=time.time()))
 
     obj = json.loads(f.read())
@@ -56,6 +74,49 @@ def room_list(game_id):
     # Finish creating a virtual folder.
     xbmcplugin.endOfDirectory(_handle)
 
+def lyingman():
+
+    f = urllib2.urlopen('http://www.zhanqi.tv/api/static/video.anchor_news/104677512-100-1.json?_v={ts}'.format(ts=time.time()))
+
+    obj = json.loads(f.read())
+
+    listing=[]
+    for room in obj['data']['videos']:
+        list_item = xbmcgui.ListItem(label=room['title'], thumbnailImage=room['bpic'])
+        list_item.setProperty('fanart_image', room['bpic'])
+        url='{0}?action=playvod&video_id={1}'.format(_url, room['id'])
+
+        #xbmc.log(url, 1)
+
+        is_folder=False
+        listing.append((url, list_item, is_folder))
+    xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
+    #xbmcplugin.addSortMethod(_handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    # Finish creating a virtual folder.
+    xbmcplugin.endOfDirectory(_handle)
+
+def play_vod(video_id):
+    """
+    Play a video by the provided path.
+    :param path: str
+    :return: None
+    """
+    f = urllib2.urlopen('http://www.zhanqi.tv/api/static/video.videoid/{video_id}.json?_v='.format(video_id=video_id))
+    obj = json.loads(f.read())
+    #path = 'http://dlhls.cdn.zhanqi.tv/zqlive/{video}.m3u8'.format(video=obj['data']['videoIdKey']);
+    #path = 'http://ebithdl.cdn.zhanqi.tv/zqlive/{video}.flv'.format(video=obj['data']['videoIdKey'])
+    path = '{VideoUrl}{VideoID}'.format(VideoUrl=obj['data']['flashvars']['VideoUrl'], VideoID=obj['data']['flashvars']['VideoID'])
+
+    #xbmc.log("------------------", 1)
+    #xbmc.log(path, 1)
+    #xbmc.log("------------------", 1)
+    play_item = xbmcgui.ListItem(path=path, thumbnailImage=obj['data']['bpic'])
+    play_item.setInfo(type="Video", infoLabels={"Title":obj['data']['title']})
+    # Pass the item to the Kodi player.
+    xbmcplugin.setResolvedUrl(_handle, True, listitem=play_item)
+    # directly play the item.
+    xbmc.Player().play(path, play_item)
+
 def play_video(room_id):
     """
     Play a video by the provided path.
@@ -89,9 +150,16 @@ def router(paramstring):
         if params['action'] == 'room_list':
             # Display the list of videos in a provided category.
             room_list(params['game_id'])
+        elif params['action'] == 'game_list':
+            game_list()
+        elif params['action'] == 'lyingman':
+            lyingman()
         elif params['action'] == 'play':
             # Play a video from a provided URL.
             play_video(params['room_id'])
+        elif params['action'] == 'playvod':
+            # Play a video from a provided URL.
+            play_vod(params['video_id'])
     else:
         # If the plugin is called from Kodi UI without any parameters,
         # display the list of video categories
