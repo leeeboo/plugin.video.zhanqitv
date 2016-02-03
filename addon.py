@@ -76,20 +76,55 @@ def room_list(game_id):
 
 def lyingman():
 
-    f = urllib2.urlopen('http://www.zhanqi.tv/api/static/video.anchor_news/108705853-100-1.json?_v={ts}'.format(ts=time.time()))
+    f = urllib2.urlopen('http://www.zhanqi.tv/topic/lyingman')
+    html = f.read()
 
-    obj = json.loads(f.read())
+    html = html.replace("\n", '')
+
+    review = re.compile('<div class="review-area">.*').findall(html)
+    review = review[0];
+
+    li_list = review.split('<li class="js-carousel-item">')
 
     listing=[]
-    for room in obj['data']['videos']:
-        list_item = xbmcgui.ListItem(label=room['title'], thumbnailImage=room['bpic'])
-        list_item.setProperty('fanart_image', room['bpic'])
-        url='{0}?action=playvod&video_id={1}'.format(_url, room['id'])
 
-        #xbmc.log(url, 1)
+    for li in li_list:
+        title = re.compile('<span class="name">([^"]*)</span>').findall(li)
+        if len(title) > 0:
 
-        is_folder=False
-        listing.append((url, list_item, is_folder))
+            title = title[0]
+
+            img = re.compile('<img src="([^"]*)"[^>]*>').findall(li)
+
+            if len(img) > 0:
+                img = img[0]
+            else:
+                img = ''
+
+            link = re.compile('<a href="/videos/([^"]*)"[^>]*>').findall(li)
+
+            if len(link) > 0:
+                link = link[0]
+                link = link.split('/')
+                link = link[len(link) - 1]
+                link = link.split('.')
+                link = link[0]
+
+                during = re.compile('<p><i class="dv iconClock png"></i><span class="dv">([^"]*)</span></p>').findall(li)
+
+                if len(during) > 0:
+                    during = during[0]
+                else:
+                    during = 'unknow'
+
+
+                list_item = xbmcgui.ListItem(label=title + '[' + during + ']', thumbnailImage=img)
+                list_item.setProperty('fanart_image', img)
+
+                url='{0}?action=playvod&video_id={1}'.format(_url, link)
+                is_folder=False
+                listing.append((url, list_item, is_folder))
+
     xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
     #xbmcplugin.addSortMethod(_handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     # Finish creating a virtual folder.
